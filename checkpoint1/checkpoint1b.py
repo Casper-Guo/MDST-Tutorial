@@ -18,26 +18,63 @@ This should load the data, perform preprocessing, and save the output to the dat
 
 """
 
+import pandas as pd
+
 def remove_percents(df, col):
+
+    def helper(x):
+        if isinstance(x, str):
+            return float(x[:-1])
+        return None
+
+    df[col] = df[col].apply(helper)
     return df
 
 def fill_zero_iron(df):
+
+    df["Iron (% DV)"].fillna(0, inplace=True)
     return df
     
 def fix_caffeine(df):
+
     return df
 
 def standardize_names(df):
+
+    def helper(x):
+        x = x.lower()
+        if "(" in x:
+            x = x[:x.find("(")]
+        return x
+
+    columns_dict = {i: helper(i) for i in df.columns}
+    df.rename(columns=columns_dict, inplace=True)
+
     return df
 
 def fix_strings(df, col):
+    alphabet = "abcdefghijklmnopqrstuvwxyz "
+
+    def helper(x):
+        processed = ""
+        for char in x:
+            if char.lower() not in alphabet:
+                continue
+            else:
+                processed += char.lower()
+        return processed
+
+    df[col] = df[col].apply(helper)
     return df
 
 
 def main():
     
     # first, read in the raw data
-    df = pd.read_csv('../data/starbucks.csv')
+    df = pd.read_csv('D:\Projects\MDST\Tutorial\mdst_tutorials\data\starbucks.csv')
+    # print(df['Iron (% DV)'])
+    print(df.head())
+    print(df.tail())
     
     # the columns below represent percent daily value and are stored as strings with a percent sign, e.g. '0%'
     # complete the remove_percents function to remove the percent symbol and convert the columns to a numeric type
@@ -66,8 +103,10 @@ def main():
     
     # now that the data is all clean, save your output to the `data` folder as 'starbucks_clean.csv'
     # you will use this file in checkpoint 2
-    
-    
+    print(df.head())
+    print(df.tail())
+    path = r'D:\Projects\MDST\Tutorial\mdst_tutorials\data'
+    df.to_csv(path + r"\starbucks_clean.csv")
 
 if __name__ == "__main__":
     main()
