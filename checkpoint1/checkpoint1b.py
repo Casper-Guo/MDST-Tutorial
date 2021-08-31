@@ -36,7 +36,9 @@ def fill_zero_iron(df):
     return df
     
 def fix_caffeine(df):
-
+    df.dropna(axis=0, inplace=True)
+    df.drop(df[df["Caffeine (mg)"] == "Varies"].index, inplace=True)
+    df.drop(df[df["Caffeine (mg)"] == "varies"].index, inplace=True)
     return df
 
 def standardize_names(df):
